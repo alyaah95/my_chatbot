@@ -1,45 +1,51 @@
 # app.py
 from flask import Flask, request, jsonify
-from flask_cors import CORS # Import CORS to handle cross-origin requests
+from flask_cors import CORS
 import nltk
 import faiss
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 import re
 
+# Import necessary libraries for the Small Language Models
+from transformers import T5ForConditionalGeneration, T5Tokenizer
+from sentence_transformers import SentenceTransformer 
+
+# Import OpenAI library
+import openai
+
 # Initialize Flask app
 app = Flask(__name__)
-# Enable CORS for all routes, allowing your frontend to connect
 CORS(app) 
 
+# --- OpenAI API Key Configuration ---
+# IMPORTANT: Replace "YOUR_OPENAI_API_KEY_HERE" with your actual OpenAI API Key.
+# For better security in a real application, store this in an environment variable.
+OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE" 
+openai.api_key = OPENAI_API_KEY
+
 # --- NLTK Download (Run once) ---
-# Ensure the 'punkt' tokenizer data is downloaded for English.
-# This explicitly tells NLTK to download the standard English tokenizer model.
-# This will only download if not already present.
 nltk.download('punkt')
 
 # --- RAG Model Components ---
-# Global variables to store the loaded RAG model components
 rag_index = None
-rag_vectorizer = None
+rag_embedding_model = None 
 rag_chunks = None
 
-# --- 1. Load Documents ---
+# --- SLM for Summarization ---
+slm_model = None
+slm_tokenizer = None
+
+# --- RAG Functions ---
 def load_documents(folder_path):
     """
     Loads text content from all .txt files within the specified folder.
-    Args:
-        folder_path (str): The path to the folder containing the documents.
-    Returns:
-        str: A single string containing the combined text from all documents.
     """
     documents = []
     if not os.path.exists(folder_path):
         print(f"Error: The folder '{folder_path}' does not exist.")
         print("Please create this folder and place your .txt files inside it.")
         return "" 
-
     for filename in os.listdir(folder_path):
         if filename.endswith(".txt"):
             file_path = os.path.join(folder_path, filename)
@@ -52,129 +58,214 @@ def load_documents(folder_path):
     if not documents:
         print(f"Warning: No .txt files found in '{folder_path}' or files are empty.")
         return ""
-    
     return " ".join(documents)
 
-# --- 2. Chunking (Using Regular Expressions) ---
 def chunk_text(text):
     """
     Splits the given text into sentences using regular expressions.
-    This avoids reliance on NLTK's built-in tokenizers which caused issues.
-    Args:
-        text (str): The input text to be chunked.
-    Returns:
-        list: A list of sentences (chunks).
     """
     if not text:
         return []
-    # This regular expression splits text by common sentence-ending punctuation
-    # (. ! ?) followed by one or more spaces and then an uppercase letter (start of next sentence).
     sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', text)
     return [s.strip() for s in sentences if s.strip()]
 
-# --- 3. Embed & Store ---
-def create_vector_store(chunks):
+def create_vector_store(chunks, embedding_model): 
     """
-    Converts text chunks into numerical vectors using TF-IDF and stores them in a FAISS index.
-    Args:
-        chunks (list): A list of text chunks (sentences).
-    Returns:
-        tuple: A tuple containing the FAISS index and the trained TfidfVectorizer.
+    Converts text chunks into numerical vectors using SentenceTransformer and stores them in a FAISS index.
     """
-    vectorizer = TfidfVectorizer()
-    vectors = vectorizer.fit_transform(chunks).toarray().astype('float32')
-    d = vectors.shape[1]
+    chunk_embeddings = embedding_model.encode(chunks, convert_to_numpy=True).astype('float32')
+    
+    d = chunk_embeddings.shape[1] 
     index = faiss.IndexFlatL2(d)
-    index.add(vectors)
-    return index, vectorizer
+    index.add(chunk_embeddings)
+    
+    return index
 
-# --- 4. Retrieval ---
-def retrieve_chunks(query, index, vectorizer, chunks, k=3):
+def retrieve_chunks(query, index, embedding_model, chunks, k=5, relevance_threshold=0.8): 
     """
-    Retrieves the most relevant text chunks from the vector store based on a user query.
-    Args:
-        query (str): The user's question.
-        index (faiss.Index): The FAISS index containing document vectors.
-        vectorizer (sklearn.feature_extraction.text.TfidfVectorizer): The trained vectorizer.
-        chunks (list): The original list of text chunks.
-        k (int): The number of top relevant chunks to retrieve.
+    Retrieves the most relevant text chunks and their distances from the vector store based on a user query.
+    Filters chunks based on a relevance threshold.
     Returns:
-        list: A list of the most relevant text chunks.
+        tuple: (list of filtered retrieved chunk texts, list of their corresponding L2 distances)
     """
     if not query:
-        return []
+        return [], np.array([])
     
-    # Transform the user's query into a vector using the SAME vectorizer
-    query_vector = vectorizer.transform([query]).toarray().astype('float32')
+    query_embedding = embedding_model.encode([query], convert_to_numpy=True).astype('float32')
     
-    # Search the FAISS index for the 'k' most similar vectors to the query vector.
-    distances, indices = index.search(query_vector, k)
+    distances, indices = index.search(query_embedding, k)
     
-    # Retrieve the actual text chunks using the obtained indices
-    retrieved_chunks = [chunks[i] for i in indices[0]]
-    
-    return retrieved_chunks
+    if indices.size == 0:
+        return [], np.array([])
+        
+    filtered_chunks_text = []
+    filtered_distances = []
 
-# --- 5. Generation ---
+    for i in range(len(indices[0])):
+        chunk_index = indices[0][i]
+        distance = distances[0][i]
+        # Only include chunks that are within the relevance threshold
+        # Lower distance = higher similarity
+        if distance < relevance_threshold: 
+            chunk_text = chunks[chunk_index]
+            if chunk_text.strip(): # Ensure chunk is not empty after stripping
+                filtered_chunks_text.append(chunk_text)
+                filtered_distances.append(distance)
+        else:
+            # Once a chunk is too dissimilar, stop looking further (assuming sorted by distance)
+            break 
+            
+    return filtered_chunks_text, np.array(filtered_distances)
+
 def generate_answer(query, context):
     """
     Generates a simple answer based on the retrieved context.
-    (This is a basic placeholder as no full LLM is used).
-    Args:
-        query (str): The user's original question.
-        context (str): The combined retrieved text chunks.
-    Returns:
-        str: A simple answer string.
     """
     if not context:
         return f"Sorry, I couldn't find relevant information for your question: '{query}'."
+    # You can enhance this by asking a small LLM to synthesize the answer
+    # from the context, but for now, we concatenate.
     return f"Based on the available information regarding '{query}':\n{context}"
 
-# --- API Endpoint ---
+# --- OpenAI API Call Function ---
+def call_openai_llm(prompt_text, model="gpt-3.5-turbo", max_tokens=200, temperature=0.7):
+    """
+    Calls the OpenAI Chat Completions API.
+    """
+    try:
+        if not openai.api_key or openai.api_key == "YOUR_OPENAI_API_KEY_HERE":
+            print("OpenAI API Key is not set or is default. Cannot call OpenAI.")
+            return "OpenAI API Key is not configured."
+
+        response = openai.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant. Provide concise and accurate answers."},
+                {"role": "user", "content": prompt_text}
+            ],
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+        return response.choices[0].message.content.strip()
+    except openai.APIError as e:
+        print(f"OpenAI API error occurred: {e}")
+        # Return a more informative error message to the user
+        return f"An OpenAI API error occurred: {e.status_code if hasattr(e, 'status_code') else 'N/A'}. Details: {e.response.json().get('error', {}).get('message', 'No specific message.') if hasattr(e, 'response') and hasattr(e.response, 'json') else str(e)}"
+    except Exception as e:
+        print(f"An unexpected error occurred during OpenAI API call: {e}")
+        return f"An unexpected error occurred with OpenAI: {e}"
+
+
+# --- API Endpoints ---
 @app.route('/ask', methods=['POST'])
 def ask_question():
+    """Endpoint for asking a question and getting a RAG-based answer with OpenAI fallback."""
     data = request.get_json()
     query = data.get('query')
-
     if not query:
-        return jsonify({"answer": "Please provide a question."}), 400
+        return jsonify({"answer": "Please provide a question.", "source": "User Error"}), 400
 
-    global rag_index, rag_vectorizer, rag_chunks
+    global rag_index, rag_embedding_model, rag_chunks
+    if rag_index is None or rag_embedding_model is None or rag_chunks is None:
+        return jsonify({"answer": "RAG model not initialized. Please restart the server.", "source": "Server Error"}), 500
 
-    # Ensure the RAG model is loaded before processing queries
-    if rag_index is None or rag_vectorizer is None or rag_chunks is None:
-        return jsonify({"answer": "RAG model not initialized. Please restart the server."}), 500
+    # Define a relevance threshold for L2 distance from SentenceTransformer embeddings.
+    # Lower distance means higher similarity. If the smallest distance is above this, RAG likely found no relevant info.
+    # This value needs to be tuned. A distance of 0.8 is quite dissimilar for MiniLM.
+    # We are now filtering inside retrieve_chunks based on this.
+    RELEVANCE_THRESHOLD = 0.8 # Adjust this value (e.g., 0.6, 0.7, 0.9) based on testing
+
+    rag_answer_source = "Internal Documents"
+    answer_text = ""
+    
+    try:
+        # Retrieve chunks and their distances, filtered by the relevance threshold
+        retrieved_chunks, distances = retrieve_chunks(query, rag_index, rag_embedding_model, rag_chunks, k=5, relevance_threshold=RELEVANCE_THRESHOLD) 
+        
+        # Check if any relevant chunks were found after filtering
+        if retrieved_chunks:
+            context_from_rag = " ".join(retrieved_chunks)
+            answer_text = generate_answer(query, context_from_rag)
+            # Log the closest distance for debugging/tuning the threshold
+            print(f"RAG found relevant context (closest distance: {distances[0]:.3f}) for query: '{query}'.")
+        else:
+            print(f"RAG found no relevant chunks (closest distance was too high or no chunks) for query: '{query}'. Falling back to OpenAI...")
+            rag_answer_source = "OpenAI (Fallback)"
+            openai_prompt = f"Answer the following question concisely: {query}"
+            answer_text = call_openai_llm(openai_prompt)
+            if not answer_text or "API Key is not configured." in answer_text: 
+                answer_text = "Sorry, I couldn't find a relevant answer in my documents or with the fallback AI. Please check server logs for more details."
+                rag_answer_source = "No Answer"
+        
+        return jsonify({"answer": answer_text, "source": rag_answer_source})
+
+    except Exception as e:
+        print(f"An unexpected error occurred in /ask endpoint: {e}")
+        return jsonify({"answer": f"An error occurred while processing your request: {e}", "source": "Error"}), 500
+
+
+@app.route('/summarize', methods=['POST'])
+def summarize_answer():
+    """Endpoint for summarizing an answer using an SLM, now considering the original question."""
+    data = request.get_json()
+    original_question = data.get('question', '') 
+    text_to_summarize = data.get('text')
+    
+    if not text_to_summarize:
+        return jsonify({"summary": "No text provided for summarization."}), 400
+
+    global slm_model, slm_tokenizer
+    if slm_model is None or slm_tokenizer is None:
+        return jsonify({"summary": "Summarization model not initialized."}), 500
 
     try:
-        retrieved_chunks = retrieve_chunks(query, rag_index, rag_vectorizer, rag_chunks)
-        context = " ".join(retrieved_chunks)
-        answer = generate_answer(query, context)
-        return jsonify({"answer": answer})
+        # Craft a prompt that guides the summarization model to answer the original question
+        # This makes the summary more relevant to the user's initial query.
+        prompt_text = f"Based on the following information, summarize the answer to the question '{original_question}':\n\n{text_to_summarize}"
+        
+        inputs = slm_tokenizer(prompt_text, return_tensors="pt", max_length=512, truncation=True)
+        summary_ids = slm_model.generate(inputs.input_ids, max_length=150, min_length=50, length_penalty=2.0, num_beams=4, early_stopping=True)
+        summary = slm_tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        
+        return jsonify({"summary": summary})
     except Exception as e:
-        print(f"Error during retrieval or generation: {e}")
-        return jsonify({"answer": "An error occurred while processing your request."}), 500
+        print(f"Error during summarization: {e}")
+        return jsonify({"summary": "An error occurred during summarization."}), 500
+
 
 # --- Model Initialization on App Startup ---
-# This block runs once when the Flask app starts
 with app.app_context():
-    print("Loading RAG model (documents, chunking, embedding)...")
-    documents_folder = "documents" # Specify the folder name
+    print("Loading RAG model components...")
+    documents_folder = "documents" 
     
     corpus = load_documents(documents_folder)
     
-    if not corpus:
-        print("Error: No documents loaded. The RAG model will not be able to answer questions.")
-    else:
+    if corpus:
         chunks = chunk_text(corpus)
-        if not chunks:
-            print("Error: No valid sentences were found after chunking. RAG model will not function.")
+        if chunks:
+            try:
+                # Load the SentenceTransformer model for RAG embeddings
+                rag_embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+                print("SentenceTransformer loaded successfully!")
+                rag_index = create_vector_store(chunks, rag_embedding_model)
+                rag_chunks = chunks
+                print("RAG model initialized successfully with semantic embeddings!")
+            except Exception as e:
+                print(f"Error loading SentenceTransformer or creating vector store: {e}")
+                print("RAG model will be unavailable.")
         else:
-            rag_index, rag_vectorizer = create_vector_store(chunks)
-            rag_chunks = chunks
-            print("RAG model initialized successfully!")
+            print("Error: No valid sentences were found after chunking. RAG model will not function.")
+    else:
+        print("Error: No documents loaded. The RAG model will not be able to answer questions.")
+    
+    print("Loading Small Language Model for summarization (google/flan-t5-small)...")
+    try:
+        slm_tokenizer = T5Tokenizer.from_pretrained("google/flan-t5-small")
+        slm_model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-small")
+        print("SLM for summarization initialized successfully!")
+    except Exception as e:
+        print(f"Error loading SLM model: {e}")
+        print("Summarization feature will be unavailable.")
 
 if __name__ == '__main__':
-    # Run the Flask app
-    # host='0.0.0.0' makes it accessible from other devices on your local network
-    # port=5000 is the default Flask port
-    app.run(host='0.0.0.0', port=5000, debug=True) # debug=True is good for development
+    app.run(host='0.0.0.0', port=5000, debug=True)

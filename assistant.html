@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egypt RAG Model</title>
+    <title>AI Assistant - Egypt Info Assistant</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 
@@ -14,9 +14,9 @@
             <nav>
                 <a href="index.html" class="logo">🇪🇬 Egypt Info</a>
                 <ul class="nav-links">
-                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="index.html">Home</a></li>
                     <li><a href="discover.html">Discover</a></li>
-                    <li><a href="assistant.html">Assistant</a></li>
+                    <li><a href="assistant.html" class="active">Assistant</a></li>
                     <li><a href="about.html">About</a></li>
                 </ul>
             </nav>
@@ -25,79 +25,48 @@
 
     <section class="hero">
         <div class="container">
-            <h1>Egypt Info Assistant 🇪🇬</h1>
-            <p>Ask about Egypt's history and geography, and I'll do my best to answer.</p>
+            <h1>Egypt AI Assistant</h1>
+            <p>Ask questions about Egypt's history and geography, and get answers powered by AI</p>
         </div>
     </section>
 
- 
-
     <section class="section">
         <div class="container">
-            <h2 class="section-title">Explore Egypt</h2>
+            <div class="assistant-container">
+                <h2 class="section-title">Ask About Egypt</h2>
 
-            <div class="card-grid">
-                <div class="card">
-                    <img src="https://i.pinimg.com/736x/e0/8e/9f/e08e9f5ad5ba79df900525822fe328d8.jpg"
-                        alt="Pyramids of Giza" class="card-img">
-                    <div class="card-content">
-                        <h3>Ancient History</h3>
-                        <p>Discover the fascinating history of ancient Egypt, from the early dynastic period to the
-                            Roman conquest.</p>
-                        <a href="discover.html" class="btn">Explore</a>
-                    </div>
+                <div class="input-group">
+                    <input type="text" id="questionInput" placeholder="Enter your question about Egypt...">
+                    <button id="askButton" class="btn">Ask</button>
                 </div>
 
-                <div class="card">
-                    <img src="https://i.pinimg.com/736x/43/d9/98/43d998b8b7812b23c858f6572a9e8698.jpg"
-                        alt="Nile River" class="card-img">
-                    <div class="card-content">
-                        <h3>Geography</h3>
-                        <p>Explore Egypt's diverse geography, from the Nile Valley to the deserts and coastal regions.
-                        </p>
-                        <a href="discover.html" class="btn">Explore</a>
-                    </div>
+                <div id="answer-area" class="answer-area">
+                    <p>Your answer will appear here...</p>
                 </div>
 
-                <div class="card">
-                    <img src="https://i.pinimg.com/1200x/79/56/88/795688789a0643011bddf2f1e7426eb7.jpg"
-                        alt="AI Assistant" class="card-img">
-                    <div class="card-content">
-                        <h3>AI Assistant</h3>
-                        <p>Ask our AI assistant any questions about Egypt and get detailed, accurate answers.</p>
-                        <a href="assistant.html" class="btn">Try Now</a>
-                    </div>
+                <div class="button-group">
+                    <button id="summarizeButton" class="btn btn-secondary hidden">Summarize Answer</button>
+                    <button id="showFullAnswerButton" class="btn btn-secondary hidden">Show Full Answer</button>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">Did You Know?</h2>
 
             <div class="card-grid">
                 <div class="card">
                     <div class="card-content">
-                        <h3>Ancient Inventions</h3>
-                        <p>Ancient Egyptians invented many things we still use today, including paper (papyrus),
-                            toothpaste, and the 365-day calendar.</p>
+                        <h3>Sample Questions</h3>
+                        <p>• What was the main characteristic of the New Kingdom of Egypt, as described in the provided text?</p>
+                        <p>• Which specific cultural and scientific center was established in Egypt during the Fatimid Rule, according to the text?</p>
+                        <p>• Besides the Nile Valley, what is the largest geographical region in Egypt, and what features characterize it?</p>
+                        <p>• What is the primary significance of the Suez Canal in terms of global trade, as mentioned in the geography text?</p>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-content">
-                        <h3>Longest River</h3>
-                        <p>The Nile River is the longest river in the world, stretching over 6,650 kilometers (4,130
-                            miles) through northeastern Africa.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Pyramid Precision</h3>
-                        <p>The Great Pyramid of Giza was the tallest man-made structure in the world for over 3,800
-                            years, until the construction of Lincoln Cathedral in England in 1311.</p>
+                        <h3>About Our Assistant</h3>
+                        <p>Our AI assistant uses advanced language models to provide accurate information about Egypt's
+                            history and geography. It can access detailed information from our knowledge base and
+                            provide concise answers to your questions.</p>
                     </div>
                 </div>
             </div>
