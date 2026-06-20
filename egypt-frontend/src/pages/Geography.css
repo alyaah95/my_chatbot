@@ -1,0 +1,558 @@
+/* تأثير النبض */
+.pulse-point {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.pulse-point .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--secondary-color, #d4af37); /* لون دهبي */
+  border-radius: 50%;
+  position: absolute;
+}
+
+.pulse-point .ring {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--secondary-color, #d4af37);
+    border-radius: 50%;
+    position: absolute;
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+
+
+
+
+
+/* الحاوية الكبرى لصفحة الجغرافيا */
+.geography-container {
+    padding-top: 100px;
+    /* مسافة كافية بعيداً عن شريط التنقل العلوي للموقع */
+    
+    text-align: center;
+}
+
+
+
+
+/* حاوية الخريطة - أهم جزء */
+.map-hero-section {
+    position: relative;
+    width: 90%;
+    /* أو العرض اللي تحبيه */
+    max-width: 1000px;
+    margin: 20px auto 60px auto;
+    /* لتوسيط الخريطة في نص الصفحة */
+}
+
+.map-wrapper {
+    position: relative;
+    /* مهم جداً عشان النقط تظبط مكانها */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.base-svg {
+    width: 100%;
+    /* الخريطة تملأ الحاوية */
+    height: auto;
+    display: block;
+}
+
+/* الدوائر النابضة - التمركز بالنسبة للمار وابر */
+.pulse-point {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    z-index: 10;
+    /* عشان تكون فوق الخريطة */
+    transform: translate(-50%, -50%);
+    /* عشان النقطة تكون في المركز بالظبط */
+}
+
+/* إلغاء شكل الشريط التقليدي */
+.geo-header {
+    text-align: center;
+    padding: 60px 20px 20px 20px;
+    /* مسافة من الأعلى لعدم الاصطدام بهيدر الموقع */
+    background: transparent;
+    /* جعل الخلفية شفافة */
+    position: relative;
+    z-index: 2;
+}
+
+.geo-header h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 8px;
+    /* مسافات واسعة للشياكة */
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+    /* توهج ذهبي خفيف */
+}
+
+.geo-header p {
+    font-style: italic;
+    color: #aaa;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+/* إضافة خط ذهبي تحت العنوان بشكل شيك */
+.geo-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #ffcc00;
+    margin: 15px auto 0;
+}
+
+/* الحاوية الخارجية الشفافة */
+.info-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    /* تعتيم للخلفية عشان الخريطة متشتتش العين */
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    /* أعلى من أي حاجة في الموقع */
+    animation: fadeIn 0.3s ease;
+}
+
+.modern-modal {
+    background: #fdfcf8;
+    width: 90%;
+    max-width: 800px;
+    /* كارت كبير */
+    height: auto;
+    max-height: 80vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* مقسوم نصين: نص صورة ونص كلام */
+    border-radius: 0;
+    /* زوايا حادة للفخامة */
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-image-side {
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    background: #e6dfd1;
+    min-height: 400px;
+}
+
+.modal-image-side img {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    object-fit: cover;
+    display: block;
+}
+
+/* جزء الكلام */
+.modal-content-side {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: right;
+}
+
+.modal-content-side h2 {
+    font-size: 2.5rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-family: serif;
+}
+
+.modal-divider {
+    width: 50px;
+    height: 3px;
+    background: #d4af37;
+    margin-bottom: 20px;
+}
+
+.modal-content-side p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+/* زر الإغلاق */
+.modal-close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    /* عكس الاتجاه عشان العربي */
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* للموبايل: نخلي الصورة فوق والكلام تحت */
+@media (max-width: 768px) {
+    .modern-modal {
+        grid-template-columns: 1fr;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-image-side {
+        min-height: 250px;
+    }
+}
+
+
+
+
+.nature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.nature-card {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.nature-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.nature-card:hover img {
+    transform: scale(1.1);
+}
+
+.nature-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30px;
+    color: white;
+    opacity: 0.9;
+}
+
+.nature-card-overlay span {
+    font-size: 1.5rem;
+    font-family: serif;
+    letter-spacing: 1px;
+}
+
+/* المعرض الصغير داخل الـ Modal */
+.mini-gallery {
+    height: 80px;
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.mini-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.mini-thumb:hover {
+    border-color: #d4af37;
+    transform: translateY(-3px);
+}
+
+.nature-grid-section {
+    padding: 100px 5%;
+    background: #e6dfd1aa;
+    color: #1a1a1a;
+}
+
+/* الحاوية اللي هتخلي الأسهم لبره */
+.nature-slider-outer-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 70px;
+    /* المسافة دي هي اللي بتطلع الأسهم لبره */
+}
+
+/* تعديل مكان الأسهم */
+.nature-slider-outer-container .swiper-button-next {
+    right: 0px !important;
+    /* السهم اليمين بره السلايدر */
+}
+
+.nature-slider-outer-container .swiper-button-prev {
+    left: 0px !important;
+    /* السهم الشمال بره السلايدر */
+}
+
+/* شكل الأسهم الشيك */
+.nature-slider-outer-container .swiper-button-next,
+.nature-slider-outer-container .swiper-button-prev {
+    width: 50px !important;
+    height: 50px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(5px);
+    border: none !important;
+    color: white !important;
+}
+
+.nature-slider-outer-container .swiper-button-next:after,
+.nature-slider-outer-container .swiper-button-prev:after {
+    font-size: 20px !important;
+    font-weight: bold;
+}
+
+.nature-slider-outer-container .swiper-button-next:hover,
+.nature-slider-outer-container .swiper-button-prev:hover {
+    background: hwb(33 42% 24%) !important;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+.swiper-pagination-bullet-active {
+    background: #c19a6b !important;
+}
+
+/* كروت السلايدر */
+.nature-card {
+    position: relative;
+    height: 450px;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.nature-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.nature-card:hover img {
+    transform: scale(1.1);
+}
+
+.nature-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30px;
+    color: white;
+    text-align: right;
+}
+
+/* --- 3. المودال والسلايدر الداخلي (Full Gallery Slider) --- */
+.modern-modal {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    /* مساحة أكبر للصورة عشان السلايدر يبان */
+    background: #fdfcf8;
+    max-width: 1000px;
+    width: 95%;
+    height: 80vh;
+}
+
+.modal-image-side {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+/* السلايدر اللي جوه المودال */
+.inner-gallery-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.inner-swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.inner-gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* عشان الصورة تبان كاملة بدون قص */
+}
+
+/* أسهم السلايدر الداخلي (تكون أصغر وجوه الصورة) */
+.inner-swiper .swiper-button-next,
+.inner-swiper .swiper-button-prev {
+    width: 35px !important;
+    height: 35px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(5px);
+    border: none !important;
+    color: white !important;
+}
+
+.inner-swiper .swiper-button-next:after,
+.inner-swiper .swiper-button-prev:after {
+    font-size: 14px !important;
+}
+
+.inner-swiper .swiper-button-next:hover,
+.inner-swiper .swiper-button-prev:hover {
+    background: hwb(33 42% 24%) !important;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* الزرار في المودال */
+.explore-more-btn {
+    padding: 12px 25px;
+    background: transparent;
+    border: 1px solid #d4af37;
+    color: #d4af37;
+    cursor: pointer;
+    font-family: serif;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+
+.explore-more-btn:hover,
+.explore-more-btn.active-btn {
+    background: #d4af37;
+    color: white;
+}
+
+/* تعديل الموبايل */
+@media (max-width: 768px) {
+    .nature-slider-outer-container {
+        padding: 0 40px;
+    }
+
+    .modern-modal {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .modal-image-side {
+        height: 300px;
+    }
+}
+
+/* الحاوية اللي بتغطي المودال كله */
+.full-gallery-overlay-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    /* خلفية سوداء للفخامة في عرض الصور */
+    z-index: 100;
+    animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* زر الرجوع داخل الجاليري */
+.close-gallery-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 110;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: serif;
+    font-weight: bold;
+    color: #1a1a1a;
+    border-radius: 4px;
+}
+
+.full-swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.full-view-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* عشان الصورة تظهر كاملة بدون قص، ولو عايزاها تملا الشاشة استخدمي cover */
+    background: #000;
+}
+
+/* حركة دخول الجاليري */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* تعديل الـ Navigation داخل الجاليري الكامل */
+.full-gallery-overlay-slider .swiper-button-next,
+.full-gallery-overlay-slider .swiper-button-prev {
+    color: #d4af37 !important;
+}
