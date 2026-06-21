@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 function Home() {
   return (
     <div className="home-content">
-      {/* Hero Section */}
+     {/* Hero Section */}
       <section className="hero">
         <div className="container">
-          <h1>Egypt Info Assistant 🇪🇬</h1>
-          <p>Ask about Egypt's history and geography, and I'll do my best to answer.</p>
+          <h1>Egyptia 🇪🇬</h1>
+          <p>
+            Discover the timeless heritage of Egypt. Explore our interactive maps, 
+            dive deep into historical eras, and query our intelligent AI assistant to uncover the secrets of the past and present.
+          </p>
         </div>
       </section>
 

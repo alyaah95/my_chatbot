@@ -8,7 +8,7 @@ function Navbar() {
       <div className="container">
         <nav>
           <Link to="/" style={{ textDecoration: 'none' }}><div className="logo" style={{cursor: 'pointer'}}>
-            🇪🇬 Egypt Info
+            Egyptia
           </div></Link>
           <ul className="nav-links">
             <li>
