@@ -6,6 +6,7 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
+from groq._base_client import DefaultHttpxClient
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY, http_client=DefaultHttpxClient())
 
 HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 HF_EMBEDDING_URL = (
