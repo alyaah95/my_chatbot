@@ -12,10 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=[
-    "http://localhost:5173",                     
-    "https://egyptia-two.vercel.app" 
-])
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY, http_client=DefaultHttpxClient())
