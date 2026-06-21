@@ -1,0 +1,8 @@
+# Production dependencies for Vercel deployment
+flask==3.0.3
+flask-cors==4.0.1
+faiss-cpu==1.8.0.post1
+numpy==1.26.4
+requests==2.32.3
+groq==0.11.0
+python-dotenv==1.0.1

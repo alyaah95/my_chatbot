@@ -1,0 +1,5 @@
+# Local asset generation dependencies
+sentence-transformers==3.1.1
+faiss-cpu==1.8.0.post1
+nltk==3.9.1
+numpy==1.26.4
