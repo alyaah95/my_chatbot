@@ -1,4 +1,3 @@
-/* تأثير النبض */
 .pulse-point {
     position: absolute;
     cursor: pointer;
@@ -8,7 +7,7 @@
 .pulse-point .dot {
   width: 6px;
   height: 6px;
-  background: var(--secondary-color, #d4af37); /* لون دهبي */
+  background: var(--secondary-color, #d4af37); 
   border-radius: 50%;
   position: absolute;
 }
@@ -39,10 +38,10 @@
 
 
 
-/* الحاوية الكبرى لصفحة الجغرافيا */
+
 .geography-container {
     padding-top: 100px;
-    /* مسافة كافية بعيداً عن شريط التنقل العلوي للموقع */
+
     
     text-align: center;
 }
@@ -50,19 +49,19 @@
 
 
 
-/* حاوية الخريطة - أهم جزء */
+
 .map-hero-section {
     position: relative;
     width: 90%;
-    /* أو العرض اللي تحبيه */
+
     max-width: 1000px;
     margin: 20px auto 60px auto;
-    /* لتوسيط الخريطة في نص الصفحة */
+
 }
 
 .map-wrapper {
     position: relative;
-    /* مهم جداً عشان النقط تظبط مكانها */
+
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -70,30 +69,30 @@
 
 .base-svg {
     width: 100%;
-    /* الخريطة تملأ الحاوية */
+
     height: auto;
     display: block;
 }
 
-/* الدوائر النابضة - التمركز بالنسبة للمار وابر */
+
 .pulse-point {
     position: absolute;
     width: 20px;
     height: 20px;
     cursor: pointer;
     z-index: 10;
-    /* عشان تكون فوق الخريطة */
+
     transform: translate(-50%, -50%);
-    /* عشان النقطة تكون في المركز بالظبط */
+   
 }
 
-/* إلغاء شكل الشريط التقليدي */
+
 .geo-header {
     text-align: center;
     padding: 60px 20px 20px 20px;
-    /* مسافة من الأعلى لعدم الاصطدام بهيدر الموقع */
+
     background: transparent;
-    /* جعل الخلفية شفافة */
+
     position: relative;
     z-index: 2;
 }
@@ -102,12 +101,12 @@
     font-size: 3rem;
     font-weight: 900;
     letter-spacing: 8px;
-    /* مسافات واسعة للشياكة */
+
     color: #fff;
     margin: 0;
     text-transform: uppercase;
     text-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
-    /* توهج ذهبي خفيف */
+
 }
 
 .geo-header p {
@@ -117,7 +116,7 @@
     margin-top: 10px;
 }
 
-/* إضافة خط ذهبي تحت العنوان بشكل شيك */
+
 .geo-header::after {
     content: '';
     display: block;
@@ -127,7 +126,7 @@
     margin: 15px auto 0;
 }
 
-/* الحاوية الخارجية الشفافة */
+
 .info-modal-overlay {
     position: fixed;
     top: 0;
@@ -135,13 +134,13 @@
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.7);
-    /* تعتيم للخلفية عشان الخريطة متشتتش العين */
+
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    /* أعلى من أي حاجة في الموقع */
+
     animation: fadeIn 0.3s ease;
 }
 
@@ -149,14 +148,14 @@
     background: #fdfcf8;
     width: 90%;
     max-width: 800px;
-    /* كارت كبير */
+  
     height: auto;
     max-height: 80vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* مقسوم نصين: نص صورة ونص كلام */
+
     border-radius: 0;
-    /* زوايا حادة للفخامة */
+
     overflow: hidden;
     position: relative;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
@@ -178,7 +177,7 @@
     display: block;
 }
 
-/* جزء الكلام */
+
 .modal-content-side {
     padding: 40px;
     display: flex;
@@ -208,12 +207,12 @@
     margin-bottom: 30px;
 }
 
-/* زر الإغلاق */
+
 .modal-close {
     position: absolute;
     top: 20px;
     left: 20px;
-    /* عكس الاتجاه عشان العربي */
+
     background: #1a1a1a;
     color: white;
     border: none;
@@ -234,7 +233,7 @@
     }
 }
 
-/* للموبايل: نخلي الصورة فوق والكلام تحت */
+
 @media (max-width: 768px) {
     .modern-modal {
         grid-template-columns: 1fr;
@@ -293,7 +292,7 @@
     letter-spacing: 1px;
 }
 
-/* المعرض الصغير داخل الـ Modal */
+
 .mini-gallery {
     height: 80px;
     display: flex;
@@ -322,27 +321,27 @@
     color: #1a1a1a;
 }
 
-/* الحاوية اللي هتخلي الأسهم لبره */
+
 .nature-slider-outer-container {
     position: relative;
     max-width: 1200px;
     margin: 50px auto;
     padding: 0 70px;
-    /* المسافة دي هي اللي بتطلع الأسهم لبره */
+
 }
 
-/* تعديل مكان الأسهم */
+
 .nature-slider-outer-container .swiper-button-next {
     right: 0px !important;
-    /* السهم اليمين بره السلايدر */
+
 }
 
 .nature-slider-outer-container .swiper-button-prev {
     left: 0px !important;
-    /* السهم الشمال بره السلايدر */
+
 }
 
-/* شكل الأسهم الشيك */
+
 .nature-slider-outer-container .swiper-button-next,
 .nature-slider-outer-container .swiper-button-prev {
     width: 50px !important;
@@ -370,7 +369,7 @@
     background: #c19a6b !important;
 }
 
-/* كروت السلايدر */
+
 .nature-card {
     position: relative;
     height: 450px;
@@ -402,11 +401,11 @@
     text-align: right;
 }
 
-/* --- 3. المودال والسلايدر الداخلي (Full Gallery Slider) --- */
+
 .modern-modal {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
-    /* مساحة أكبر للصورة عشان السلايدر يبان */
+   
     background: #fdfcf8;
     max-width: 1000px;
     width: 95%;
@@ -419,7 +418,7 @@
     overflow: hidden;
 }
 
-/* السلايدر اللي جوه المودال */
+
 .inner-gallery-wrapper {
     width: 100%;
     height: 100%;
@@ -434,10 +433,10 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* عشان الصورة تبان كاملة بدون قص */
+
 }
 
-/* أسهم السلايدر الداخلي (تكون أصغر وجوه الصورة) */
+
 .inner-swiper .swiper-button-next,
 .inner-swiper .swiper-button-prev {
     width: 35px !important;
@@ -460,7 +459,7 @@
     transform: scale(1.1);
 }
 
-/* الزرار في المودال */
+
 .explore-more-btn {
     padding: 12px 25px;
     background: transparent;
@@ -478,7 +477,7 @@
     color: white;
 }
 
-/* تعديل الموبايل */
+
 @media (max-width: 768px) {
     .nature-slider-outer-container {
         padding: 0 40px;
@@ -494,7 +493,7 @@
     }
 }
 
-/* الحاوية اللي بتغطي المودال كله */
+
 .full-gallery-overlay-slider {
     position: absolute;
     top: 0;
@@ -502,14 +501,14 @@
     width: 100%;
     height: 100%;
     background: #000;
-    /* خلفية سوداء للفخامة في عرض الصور */
+  
     z-index: 100;
     animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
 }
 
-/* زر الرجوع داخل الجاليري */
+
 .close-gallery-btn {
     position: absolute;
     top: 20px;
@@ -534,11 +533,11 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* عشان الصورة تظهر كاملة بدون قص، ولو عايزاها تملا الشاشة استخدمي cover */
+    
     background: #000;
 }
 
-/* حركة دخول الجاليري */
+
 @keyframes slideInUp {
     from {
         transform: translateY(100%);
@@ -551,7 +550,7 @@
     }
 }
 
-/* تعديل الـ Navigation داخل الجاليري الكامل */
+
 .full-gallery-overlay-slider .swiper-button-next,
 .full-gallery-overlay-slider .swiper-button-prev {
     color: #d4af37 !important;

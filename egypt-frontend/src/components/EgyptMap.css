@@ -4,23 +4,23 @@
 
 .governorate {
     fill: #e6dfd1 !important;
-    /* لون الخلفية اللي اخترناه */
+
     stroke: var(--primary-color);
     stroke-width: 1px;
     cursor: pointer !important;
-    /* هيشتغل غصب عنه هنا */
+
     transition: var(--transition);
     pointer-events: all;
-    /* تأكيد إن العنصر بيستقبل الماوس */
+
 }
 
 .governorate:hover {
     fill: var(--primary-color) !important;
     transform: translateY(-2px);
-    /* حركة خفيفة */
+
 }
 
-/* حركة الدائرة النابضة */
+
 .hotspot-ring {
     fill: none;
     stroke: var(--secondary-color);
@@ -46,9 +46,9 @@
     stroke: var(--secondary-color);
     stroke-width: 1;
     transform-origin: center;
-    /* مهم جداً */
+
     transform-box: fill-box;
-    /* مهم جداً */
+
     animation: svg-pulse 2s infinite;
 }
 

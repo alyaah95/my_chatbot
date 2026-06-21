@@ -9,9 +9,9 @@ import './App.css';
 
 function App() {
   return (
-    <Router> {/* غلفي الـ App كله بـ Router */}
+    <Router>
       <div className="app-container">
-        <Navbar /> {/* الناف بار مبقاش محتاج Props */}
+        <Navbar />
 
         <main>
           <Routes>

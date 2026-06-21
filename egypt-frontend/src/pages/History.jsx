@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './History.css';
 
-// استدعاء البيانات من الملف المنفصل
+
 import { eraData, erasMetadata } from '../data/historyData';
 
 function History() {
@@ -11,7 +11,7 @@ function History() {
 
   const currentData = eraData[selectedEra] || { title: selectedEra.toUpperCase(), heroes: [], philosophy: "", mapMilestones: [] };
 
-  // حساب الـ Milestone الحالي بناءً على الـ Slider
+
   const currentMilestone = currentData.mapMilestones && currentData.mapMilestones.length > 0
     ? [...currentData.mapMilestones].reverse().find(m => mapScale >= m.threshold) || currentData.mapMilestones[0]
     : null;
@@ -80,7 +80,7 @@ function History() {
               <p>Slide through the timeline to witness the shifting borders</p>
             </div>
 
-            {/* عرض معلومات المرحلة الحالية */}
+
             <div className="map-info-overlay">
               {currentMilestone && (
                 <div className="milestone-info fade-in" key={currentMilestone.year}>
