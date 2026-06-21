@@ -12,7 +12,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=[
+    "http://localhost:5173",                     
+    "https://egyptia-two.vercel.app/" 
+])
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY, http_client=DefaultHttpxClient())
@@ -47,7 +50,7 @@ def load_rag_assets():
 
     print(f"Loaded FAISS index ({rag_index.ntotal} vectors) and {len(rag_chunks)} chunks.")
 
-# Initialize assets on startup
+# Initialize assets on startup.
 load_rag_assets()
 
 def get_query_embedding(query, timeout=15):
