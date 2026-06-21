@@ -14,7 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=[
     "http://localhost:5173",                     
-    "https://egyptia-two.vercel.app/" 
+    "https://egyptia-two.vercel.app" 
 ])
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
