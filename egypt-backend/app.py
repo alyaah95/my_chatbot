@@ -149,7 +149,7 @@ def call_groq_llm(query, context=None):
             user_content = query
 
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": user_content},
