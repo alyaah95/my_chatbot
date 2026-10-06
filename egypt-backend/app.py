@@ -214,7 +214,7 @@ def summarize_answer():
         )
 
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": summary_system_prompt},
                 {"role": "user", "content": f"Text to refine: {text_to_summarize}"},
